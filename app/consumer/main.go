@@ -5,27 +5,34 @@ import (
 	"log"
 	"os"
 	"os/signal"
-	// "fmt"
-	kafka "notification-system/kafka"
 
-	// "github.com/IBM/sarama"
+	kafka "notification-system/kafka"
+	"github.com/IBM/sarama"
 )
 
-// type Consumer struct{}
+type Consumer struct{}
 
-// func (c *Consumer) Setup(sarama.ConsumerGroupSession) error   { return nil }
-// func (c *Consumer) Cleanup(sarama.ConsumerGroupSession) error { return nil }
+func (c *Consumer) Setup(sarama.ConsumerGroupSession) error   { return nil }
+func (c *Consumer) Cleanup(sarama.ConsumerGroupSession) error { return nil }
 
-// // This is called once per message
-// func (c *Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
-// 	for message := range claim.Messages() {
-// 		log.Printf("Message claimed: topic = %s, partition = %d, offset = %d, value = %s",
-// 			message.Topic, message.Partition, message.Offset, string(message.Value))
-// 			kafka.PublishTopic("email-topic", string(message.Value))
-// 		session.MarkMessage(message, "")
-// 	}
-// 	return nil
-// }
+func (c *Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
+	for message := range claim.Messages() {
+		log.Printf("Message claimed: topic = %s, partition = %d, offset = %d, value = %s",
+			message.Topic, message.Partition, message.Offset, string(message.Value))
+			if os.Args[2] == "fanout" {
+				kafka.PublishTopic("email-topic", string(message.Value))
+			} else {
+				sendEmail(string(message.Value))
+			}
+			
+		session.MarkMessage(message, "")
+	}
+	return nil
+}
+
+func sendEmail(message string) {
+	log.Printf("sending email - %s", message)
+}
 
 func main() {
 	
@@ -33,7 +40,7 @@ func main() {
 
 	client, err := kafka.BuildClient()
 	
-	consumer := kafka.BuildConsumer()
+	consumer := &Consumer{}
 
 	ctx, cancel := context.WithCancel(context.Background())
 	

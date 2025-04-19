@@ -1,29 +1,9 @@
 package Kafka
 
 import (
-	// "context"
-	"log"
-	// "fmt"
-	// kafka "notification-system/kafka"
-
 	"github.com/IBM/sarama"
 )
 
-
-type Consumer struct{}
-
-func (c *Consumer) Setup(sarama.ConsumerGroupSession) error   { return nil }
-func (c *Consumer) Cleanup(sarama.ConsumerGroupSession) error { return nil }
-
-func (c *Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
-	for message := range claim.Messages() {
-		log.Printf("Message claimed: topic = %s, partition = %d, offset = %d, value = %s",
-			message.Topic, message.Partition, message.Offset, string(message.Value))
-			PublishTopic("email-topic", string(message.Value))
-		session.MarkMessage(message, "")
-	}
-	return nil
-}
 
 
 func BuildClient() (sarama.ConsumerGroup, error) {
@@ -47,8 +27,3 @@ func BuildClient() (sarama.ConsumerGroup, error) {
 
 	return client, nil
 }
-
-func BuildConsumer() *Consumer {
-	return &Consumer{}
-}
-
