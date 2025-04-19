@@ -8,39 +8,35 @@ import (
 	// "fmt"
 	kafka "notification-system/kafka"
 
-	"github.com/IBM/sarama"
+	// "github.com/IBM/sarama"
 )
 
-type Consumer struct{}
+// type Consumer struct{}
 
-func (c *Consumer) Setup(sarama.ConsumerGroupSession) error   { return nil }
-func (c *Consumer) Cleanup(sarama.ConsumerGroupSession) error { return nil }
+// func (c *Consumer) Setup(sarama.ConsumerGroupSession) error   { return nil }
+// func (c *Consumer) Cleanup(sarama.ConsumerGroupSession) error { return nil }
 
-// This is called once per message
-func (c *Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
-	for message := range claim.Messages() {
-		log.Printf("Message claimed: topic = %s, partition = %d, offset = %d, value = %s",
-			message.Topic, message.Partition, message.Offset, string(message.Value))
-			kafka.PublishTopic("email-topic", string(message.Value))
-		session.MarkMessage(message, "")
-	}
-	return nil
-}
+// // This is called once per message
+// func (c *Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim sarama.ConsumerGroupClaim) error {
+// 	for message := range claim.Messages() {
+// 		log.Printf("Message claimed: topic = %s, partition = %d, offset = %d, value = %s",
+// 			message.Topic, message.Partition, message.Offset, string(message.Value))
+// 			kafka.PublishTopic("email-topic", string(message.Value))
+// 		session.MarkMessage(message, "")
+// 	}
+// 	return nil
+// }
 
 func main() {
-	brokers := []string{"localhost:9092"}
-	topic := "test-topic"
-	group := "your-consumer-group"
+	
+	topic := os.Args[1]
 
-	config := sarama.NewConfig()
-	config.Version = sarama.V2_1_0_0 // pick appropriate version
-	config.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRange
-	config.Consumer.Offsets.Initial = sarama.OffsetNewest
-
-	consumer := &Consumer{}
+	client, err := kafka.BuildClient()
+	
+	consumer := kafka.BuildConsumer()
 
 	ctx, cancel := context.WithCancel(context.Background())
-	client, err := sarama.NewConsumerGroup(brokers, group, config)
+	
 	if err != nil {
 		log.Fatalf("Error creating consumer group client: %v", err)
 	}
