@@ -1,4 +1,4 @@
-package main
+package Kafka
 
 import (
 	"context"
@@ -8,7 +8,6 @@ import (
 	// "fmt"
 
 	"github.com/IBM/sarama"
-	"notification-system/kafka"
 )
 
 type Consumer struct{}
@@ -21,7 +20,7 @@ func (c *Consumer) ConsumeClaim(session sarama.ConsumerGroupSession, claim saram
 	for message := range claim.Messages() {
 		log.Printf("Message claimed: topic = %s, partition = %d, offset = %d, value = %s",
 			message.Topic, message.Partition, message.Offset, string(message.Value))
-			Kafka.PublishTopic("email-topic", string(message.Value))
+			PublishTopic("email-topic", string(message.Value))
 		session.MarkMessage(message, "")
 	}
 	return nil

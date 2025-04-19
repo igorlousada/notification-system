@@ -6,7 +6,7 @@ package Kafka
 		"github.com/IBM/sarama"
 	)
 
-	func PublishTopic(topic string, messageToSend string)  {
+	func PublishTopic(topic string, messageToSend string) (string, error) {
 		config := sarama.NewConfig()
 		config.Producer.RequiredAcks = sarama.WaitForAll
 		config.Producer.Return.Successes = true
@@ -29,4 +29,6 @@ package Kafka
 		}
 
 		log.Printf("Message sent to partition %d at offset %d\n", partition, offset)
+
+		return "ok", nil
 	}
