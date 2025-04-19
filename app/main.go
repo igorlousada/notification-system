@@ -4,6 +4,8 @@ import (
     "log"
 	"os"
     "github.com/gofiber/fiber/v3"
+	// "encoding/json"
+	// "fmt"
 	kafka "notification-system/kafka"
 )
 
@@ -46,17 +48,33 @@ func setupRoutes() *fiber.App {
 	app := fiber.New()
 
 	app.Post("/send-notification", func(c fiber.Ctx) error {
+		// var msg Message
+
+		// err := json.Unmarshal(c.Body(), &msg)
+
+		// if err != nil {
+		// 	return c.SendString("invalid request")
+		// }
+
+		// fmt.Printf("%+v\n", msg)
+		// fmt.Printf(string(c.Body()))
 		if os.Getenv("test_env") == "true" {
 			mock := &mockType{}
 			mockMessage := NewService(mock)
-			mockMessage.service.PublishTopic("test-topic", "Hello kafka!")
+			mockMessage.service.PublishTopic("test-topic", string(c.Body()))
 		} else {
 			test := &kafkaType{}
 			testMessage := NewService(test)
-			testMessage.service.PublishTopic("test-topic", "Hello kafka!")
+			testMessage.service.PublishTopic("test-topic", string(c.Body()))
 		}
 		return c.SendString("abacate")
 	})
 
     return app
 }
+
+
+// type Message struct {
+// 	User_uuid string `json: "user_uuid"`
+// 	Message string	`json: "message"`
+// }
