@@ -61,11 +61,11 @@ func setupRoutes() *fiber.App {
 		if os.Getenv("test_env") == "true" {
 			mock := &mockType{}
 			mockMessage := NewService(mock)
-			mockMessage.service.PublishTopic("test-topic", string(c.Body()))
+			mockMessage.service.PublishTopic("notification-purchase", string(c.Body()))
 		} else {
 			test := &kafkaType{}
 			testMessage := NewService(test)
-			testMessage.service.PublishTopic("test-topic", string(c.Body()))
+			testMessage.service.PublishTopic("notification-purchase", string(c.Body()))
 		}
 		return c.SendString("abacate")
 	})
