@@ -24,7 +24,7 @@ package Kafka
 
 		partition, offset, err := producer.SendMessage(message)
 		if err != nil {
-			log.Fatalf("Eita poggers: %v", err)
+			log.Fatalf("Error producer: %v", err)
 		}
 
 		log.Printf("Message sent to partition %d at offset %d\n", partition, offset)
