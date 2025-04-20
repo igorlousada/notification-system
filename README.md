@@ -38,6 +38,8 @@ To guarantee at least once when any consumer reads from a topic, we only forward
 - For this project, I created only the email worker. The code can be easily adapt to create new workers. 
 - I do not guarantee idempotency with this design. For future relases, I could provide a new HTTP method PUT, guaranting idempotency for a given transaction. For this, we would need to guarantee that a message is not processed twice for a given transaction.
 - I did not implemented the client to send email. For this project, I only log the purchase payload.
+- I only implementend automated tests related to the endpoint POST /send-notification. In future releases, I could
+refactor the code to add more tests.
 
 
 ## Requirements
@@ -45,7 +47,7 @@ To guarantee at least once when any consumer reads from a topic, we only forward
 - Go 1.24.2 or higher
 - Docker and Docker-Compose
 
-## Installation
+## Running application
 
 ```bash
 git clone https://github.com/igorlousada/notification-system.git
