@@ -14,22 +14,22 @@ The system has the following constraints:
 ### Solution
 With the above description, the following solution has been create:
 
-For this project, I used [Apache Kafka](https://kafka.apache.org/) as message broker. When the backend receives a valid message,
-it sends the message to Kafka. After the message is correctly persisted in Kafka, we return to the client
-a HTTP status 200.
+For this project, I used [Apache Kafka](https://kafka.apache.org/) as a message broker. When the backend receives a valid message,
+it sends the message to Kafka. After the message is correctly preserved in Kafka, we return 
+an HTTP status of 200 to the client.
 
 To guarantee at least once constraint, I created the publisher/producer with a config that the Kafka ACK is only sent when a 
-minimium of replicas commited the message. To consume this messages, I created a module called consumer, a CLI app that spawn a 
-new consumer, responsible for reading a Kafka topic. For the system design required for this project, I created two kinds of consumer:
-fanout and worker. 
+minimum of replicas committed the message. To consume these messages, I created a module called consumer, a CLI app that spawns a 
+new consumer, responsible for reading a Kafka topic. For the system design required for this project, I created two kinds of consumers:
+Fanout and Worker. 
 
-A fanout is responsible for read a topic from Kafka that contain all notifications from users. When read this messages, the fanout 
+A Fanout is responsible for reading a topic from Kafka that contains all notifications from users. When these messages are read, the Fanout 
 is responsible for sending the message for related topics, associated with a channel (e-mail, slack, text). With this architecture, 
-we have two strong benefit: it is possible to horizontally scale our application, creating new workers of the same type, 
+we have two strong benefits: it is possible to horizontally scale our application, creating new workers of the same type, 
 and for creating a new kind of worker (that integrates with a new channel), it is only needed the code to implement the integration 
 with the channel, as the code related to the worker will be reused. 
 
-To guarantee and at least once when any consumer reads from a topic, we only forward the topic offset after the message is correctly processed.
+To guarantee at least once when any consumer reads from a topic, we only forward the topic offset after the message is correctly processed.
 
  The image below represents the system descripted:
 ![alt text](system-design.png)
