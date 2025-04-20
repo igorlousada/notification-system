@@ -61,6 +61,6 @@ go run main.go notification-purchase fanout
 go run main.go email-topic worker
 ```
 
-After the steps above, send a POST http request to ``localhost:3000/send-notification```.
+After the steps above, send a POST http request to ``localhost:3000/send-notification``.
 Check the terminal that the fanout consumer is running.
 Check the terminal that the email worker is running.
