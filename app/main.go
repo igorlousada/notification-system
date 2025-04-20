@@ -3,10 +3,10 @@ package main
 import (
     "log"
 	"os"
-    "github.com/gofiber/fiber/v3"
-	// "encoding/json"
-	// "fmt"
+	"encoding/json"
+
 	kafka "notification-system/kafka"
+	"github.com/gofiber/fiber/v3"
 )
 
 type publishInterface interface {
@@ -48,16 +48,34 @@ func setupRoutes() *fiber.App {
 	app := fiber.New()
 
 	app.Post("/send-notification", func(c fiber.Ctx) error {
-		// var msg Message
+		var msg Message
 
-		// err := json.Unmarshal(c.Body(), &msg)
+		log.Printf("%+v", string(c.Body()))
+		err := json.Unmarshal(c.Body(), &msg)
 
-		// if err != nil {
-		// 	return c.SendString("invalid request")
-		// }
+		if err != nil {
+			return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+				"error": "bad request",
+				"message": "JSON body is malformed",
+			})
+		}
 
-		// fmt.Printf("%+v\n", msg)
-		// fmt.Printf(string(c.Body()))
+		if msg.User_uuid == "" {
+			return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+				"error": "invalid request",
+				"message": "User_uuid is empty",
+			})
+		}
+
+		if msg.Message == "" {
+			return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
+				"error": "invalid request",
+				"message": "Message is empty",
+			})
+		}
+
+
+
 		if os.Getenv("test_env") == "true" {
 			mock := &mockType{}
 			mockMessage := NewService(mock)
@@ -74,7 +92,7 @@ func setupRoutes() *fiber.App {
 }
 
 
-// type Message struct {
-// 	User_uuid string `json: "user_uuid"`
-// 	Message string	`json: "message"`
-// }
+type Message struct {
+	User_uuid string `json: "user_uuid"`
+	Message string	`json: "message"`
+}
