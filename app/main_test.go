@@ -9,7 +9,6 @@ import (
 	"encoding/json"
 	"github.com/gofiber/fiber/v3"
 	"github.com/stretchr/testify/assert"
-	// "fmt"
 )
 
 func setup() *fiber.App{
@@ -21,7 +20,6 @@ func setup() *fiber.App{
 func TestPostEndpoint(t *testing.T) {
 	app := setup()
 	requestBody := map[string]string{"user_uuid": "123", "message": "purchase alert - $45"}
-	// fmt.Println(requestBody)
 	parsedBody, _ := json.Marshal(requestBody)
 
 	req := httptest.NewRequest(http.MethodPost, "/send-notification", bytes.NewReader(parsedBody))
