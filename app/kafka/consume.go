@@ -11,9 +11,10 @@ func BuildClient() (sarama.ConsumerGroup, error) {
 	group := "your-consumer-group"
 
 	config := sarama.NewConfig()
-	config.Version = sarama.V2_1_0_0 // pick appropriate version
+	config.Version = sarama.V2_1_0_0
 	config.Consumer.Group.Rebalance.Strategy = sarama.BalanceStrategyRange
 	config.Consumer.Offsets.Initial = sarama.OffsetNewest
+	config.Consumer.Offsets.AutoCommit.Enable = false
 
 	client, err := sarama.NewConsumerGroup(brokers, group, config)
 	
