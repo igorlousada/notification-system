@@ -2,7 +2,6 @@ package Kafka
 	
 	import (
 		"log"
-		// "fmt"
 		"github.com/IBM/sarama"
 	)
 
