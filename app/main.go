@@ -101,8 +101,8 @@ func setupRoutes() *fiber.App {
 		}
 
 		return c.Status(fiber.StatusOK).JSON(fiber.Map{
-			"error": "Internal server error",
-			"message": "Server could not process the message",
+			"status": "OK",
+			"message": "Notification sent",
 		})
 	})
 
