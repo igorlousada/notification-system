@@ -74,18 +74,36 @@ func setupRoutes() *fiber.App {
 			})
 		}
 
-
+		var publisher publishInterface
 
 		if os.Getenv("test_env") == "true" {
-			mock := &mockType{}
-			mockMessage := NewService(mock)
-			mockMessage.service.PublishTopic("notification-purchase", string(c.Body()))
+			publisher = &mockType{}
 		} else {
-			test := &kafkaType{}
-			testMessage := NewService(test)
-			testMessage.service.PublishTopic("notification-purchase", string(c.Body()))
+			publisher = &kafkaType{}
 		}
-		return c.SendString("abacate")
+
+		sendMessage := NewService(publisher)
+
+		ok, err := sendMessage.service.PublishTopic("notification-purchase", string(c.Body()))
+
+		if err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Internal server error",
+				"message": "Server could not process the message",
+			})
+		}
+
+		if ok != "ok" {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Internal server error",
+				"message": "Server could not process the message",
+			})
+		}
+
+		return c.Status(fiber.StatusOK).JSON(fiber.Map{
+			"error": "Internal server error",
+			"message": "Server could not process the message",
+		})
 	})
 
     return app
