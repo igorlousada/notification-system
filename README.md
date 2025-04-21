@@ -17,16 +17,13 @@ For this project, I used [Apache Kafka](https://kafka.apache.org/) as a message 
 it sends the message to Kafka. After the message is correctly persisted in Kafka, we return 
 an HTTP status 200 to client.
 
-To guarantee at least once constraint, I created the publisher/producer with a config that the Kafka ACK is only sent when a 
+To guarantee at least once constraint, I created the publisher/producer with a configuration that the Kafka ACK is only sent when a 
 minimum of replicas committed the message. To consume these messages, I created a module called consumer, a CLI app that spawns a 
 new consumer, responsible for reading a Kafka topic. For the system design required for this project, I created two kinds of consumers:
 Fanout and Worker. 
 
 A Fanout is responsible for reading a topic from Kafka that contains all notifications from users. When these messages are read, the Fanout 
-is responsible for sending the message to related topics, associated with a channel (e-mail, slack, text). With this architecture, 
-we have two strong benefits: it is possible to horizontally scale our application, creating new workers of the same type, 
-and for creating a new kind of worker (that integrates with a new channel), it is only needed the code to implement the integration 
-with the channel, as the code related to the worker will be reused. 
+is responsible for sending the message to all topics configured by that user, and each topic is associated with a channel (e-mail, slack, text). The worker is responsible for reading from a topic (email topic, for example) and send to appropriate channel (sending an email). With this architecture, we have two strong benefits: it is possible to horizontally scale our application, creating new consumers of the same type, either fanout and worker consumers, and for creating a new kind of worker (that integrates with a new channel), it is only needed the code to implement the integration with the channel, as the code related to the worker will be reused. 
 
 To guarantee at least once when any consumer reads from a topic, we only forward the topic offset after the message is correctly processed.
 
